@@ -146,64 +146,69 @@ class FTPClient:
     # ==================== COMMANDS TO IMPLEMENT ====================
     
     def rename_file(self):
-        print("\nRENAME FILE")
-        vechi = input("nume vechi: ")
-        nou = input("nume nou: ")
-        command = {'command': 'rename_file', 'old_name': vechi, 'new_name': nou}
+        """STUDENT TASK: Rename a file on server"""
+        print("\n✏️  RENAME FILE (Server)")
+        print("-" * 40)
+        
+        command = {'command': 'rename_file'}
         response = self.send_command(command)
+        
         if response['status'] == 'error':
-            print("Eroare: " + response['message'])
+            print(f" {response['message']}")
         else:
-            print("Succes: " + response['message'])
+            print(f"✓ {response['message']}")
     
     def read_file(self):
-        print("\nREAD FILE")
-        self.list_files()
-        fisier = input("ce fisier vrei sa citesti: ")
-        command = {'command': 'read_file', 'filename': fisier}
+        """STUDENT TASK: Read file content from server"""
+        print("\n📖 READ FILE (Server)")
+        print("-" * 40)
+        
+        command = {'command': 'read_file'}
         response = self.send_command(command)
+        
         if response['status'] == 'error':
-            print("Eroare: " + response['message'])
+            print(f" {response['message']}")
         else:
-            print("Continut fisier:")
-            print(response['content'])
+            print(f"✓ {response['message']}")
     
     def download(self):
-        print("\nDOWNLOAD")
-        self.list_files()
-        fisier = input("ce fisier descarci: ")
-        command = {'command': 'download', 'filename': fisier}
+        """STUDENT TASK: Download file from server to local"""
+        print("\n📥 DOWNLOAD FILE")
+        print("-" * 40)
+        
+        command = {'command': 'download'}
         response = self.send_command(command)
+        
         if response['status'] == 'error':
-            print("Eroare: " + response['message'])
+            print(f" {response['message']}")
         else:
-            f = open(os.path.join(LOCAL_FILES_DIR, fisier), 'w')
-            f.write(response['content'])
-            f.close()
-            print("fisier salvat local ok")
+            print(f"✓ {response['message']}")
     
     def edit_file(self):
-        print("\nEDIT FILE")
-        self.list_files()
-        fisier = input("nume fisier: ")
-        text_nou = input("text nou: ")
-        command = {'command': 'edit_file', 'filename': fisier, 'content': text_nou}
+        """STUDENT TASK: Edit file on server"""
+        print("\n🛠️  EDIT FILE (Server)")
+        print("-" * 40)
+        
+        command = {'command': 'edit_file'}
         response = self.send_command(command)
+        
         if response['status'] == 'error':
-            print("Eroare: " + response['message'])
+            print(f" {response['message']}")
         else:
-            print("Succes: " + response['message'])
+            print(f"✓ {response['message']}")
     
     def see_file_operation_history(self):
-        print("\nHISTORY")
-        self.list_files()
-        fisier = input("pentru ce fisier vrei istoric: ")
-        command = {'command': 'see_file_operation_history', 'filename': fisier}
+        """STUDENT TASK: See file operation history on server"""
+        print("\n📜 SEE FILE OPERATION HISTORY")
+        print("-" * 40)
+        
+        command = {'command': 'see_file_operation_history'}
         response = self.send_command(command)
+        
         if response['status'] == 'error':
-            print("Eroare: " + response['message'])
+            print(f" {response['message']}")
         else:
-            print("Istoric " + fisier + ":\n" + response['message'])
+            print(f"✓ {response['message']}")
     
     def list_files(self):
         """List files on server"""

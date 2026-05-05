@@ -3,8 +3,6 @@ import json
 import os
 import threading
 
-istoric = {}
-
 # Configuration
 SERVER_HOST = 'localhost'
 SERVER_PORT = 5000
@@ -69,10 +67,6 @@ def handle_client(conn, addr):
                     with open(filepath, 'w') as f:
                         f.write(content)
                     
-                    if filename not in istoric:
-                        istoric[filename] = []
-                    istoric[filename].append("fisier creat")
-                    
                     response = {'status': 'success', 'message': f'File {filename} created on server'}
                     print(f"✓ File created: {filename}")
                 
@@ -84,77 +78,23 @@ def handle_client(conn, addr):
                     with open(filepath, 'w') as f:
                         f.write(content)
                     
-                    if filename not in istoric:
-                        istoric[filename] = []
-                    istoric[filename].append("upload de la client")
-                    
                     response = {'status': 'success', 'message': f'File {filename} uploaded'}
                     print(f"✓ File uploaded: {filename}")
                 
                 elif command == 'rename_file':
-                    vechi = request.get('old_name')
-                    nou = request.get('new_name')
-                    try:
-                        os.rename(os.path.join(FILES_DIR, vechi), os.path.join(FILES_DIR, nou))
-                        if vechi in istoric:
-                            istoric[nou] = istoric[vechi]
-                            del istoric[vechi]
-                        else:
-                            istoric[nou] = []
-                        istoric[nou].append("redenumit din " + vechi)
-                        response = {'status': 'success', 'message': 'fisier redenumit'}
-                    except Exception as e:
-                        response = {'status': 'error', 'message': str(e)}
+                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
                 
                 elif command == 'read_file':
-                    fisier = request.get('filename')
-                    try:
-                        f = open(os.path.join(FILES_DIR, fisier), 'r')
-                        text = f.read()
-                        f.close()
-                        if fisier not in istoric:
-                            istoric[fisier] = []
-                        istoric[fisier].append("fisier citit")
-                        response = {'status': 'success', 'content': text}
-                    except Exception as e:
-                        response = {'status': 'error', 'message': str(e)}
+                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
                 
                 elif command == 'download':
-                    fisier = request.get('filename')
-                    try:
-                        f = open(os.path.join(FILES_DIR, fisier), 'r')
-                        text = f.read()
-                        f.close()
-                        if fisier not in istoric:
-                            istoric[fisier] = []
-                        istoric[fisier].append("fisier descarcat")
-                        response = {'status': 'success', 'content': text}
-                    except Exception as e:
-                        response = {'status': 'error', 'message': str(e)}
+                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
                 
                 elif command == 'edit_file':
-                    fisier = request.get('filename')
-                    text_nou = request.get('content')
-                    try:
-                        f = open(os.path.join(FILES_DIR, fisier), 'w')
-                        f.write(text_nou)
-                        f.close()
-                        if fisier not in istoric:
-                            istoric[fisier] = []
-                        istoric[fisier].append("continut editat")
-                        response = {'status': 'success', 'message': 'fisier modificat cu succes'}
-                    except Exception as e:
-                        response = {'status': 'error', 'message': str(e)}
+                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
                 
                 elif command == 'see_file_operation_history':
-                    fisier = request.get('filename')
-                    if fisier in istoric:
-                        msg = ""
-                        for actiune in istoric[fisier]:
-                            msg = msg + actiune + "\n"
-                        response = {'status': 'success', 'message': msg}
-                    else:
-                        response = {'status': 'success', 'message': 'nu exista istoric'}
+                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
                 
                 elif command == 'list_files':
                     files = os.listdir(FILES_DIR)
