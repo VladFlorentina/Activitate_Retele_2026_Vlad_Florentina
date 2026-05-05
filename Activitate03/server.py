@@ -10,6 +10,8 @@ FILES_DIR = 'files'
 DEFAULT_USER = 'student'
 DEFAULT_PASSWORD = '1234'
 
+file_history = {}
+
 def ensure_files_dir():
     """Ensure files directory exists"""
     if not os.path.exists(FILES_DIR):
@@ -66,6 +68,9 @@ def handle_client(conn, addr):
                     filepath = os.path.join(FILES_DIR, filename)
                     with open(filepath, 'w') as f:
                         f.write(content)
+                    if filename not in file_history:
+                        file_history[filename] = []
+                    file_history[filename].append('create')
                     
                     response = {'status': 'success', 'message': f'File {filename} created on server'}
                     print(f"✓ File created: {filename}")
@@ -77,24 +82,76 @@ def handle_client(conn, addr):
                     filepath = os.path.join(FILES_DIR, filename)
                     with open(filepath, 'w') as f:
                         f.write(content)
+                    if filename not in file_history:
+                        file_history[filename] = []
+                    file_history[filename].append('upload')
                     
                     response = {'status': 'success', 'message': f'File {filename} uploaded'}
                     print(f"✓ File uploaded: {filename}")
                 
                 elif command == 'rename_file':
-                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
+                    old_name = request.get('old_name')
+                    new_name = request.get('new_name')
+                    old_path = os.path.join(FILES_DIR, old_name)
+                    new_path = os.path.join(FILES_DIR, new_name)
+                    if os.path.exists(old_path):
+                        os.rename(old_path, new_path)
+                        if old_name in file_history:
+                            file_history[new_name] = file_history.pop(old_name)
+                        if new_name not in file_history:
+                            file_history[new_name] = []
+                        file_history[new_name].append('rename from ' + old_name + ' to ' + new_name)
+                        response = {'status': 'success', 'message': f'Fisierul {old_name} a fost redenumit in {new_name}'}
+                    else:
+                        response = {'status': 'error', 'message': f'Fisierul {old_name} nu exista'}
                 
                 elif command == 'read_file':
-                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
+                    filename = request.get('filename')
+                    filepath = os.path.join(FILES_DIR, filename)
+                    if os.path.exists(filepath):
+                        with open(filepath, 'r') as f:
+                            content = f.read()
+                        if filename not in file_history:
+                            file_history[filename] = []
+                        file_history[filename].append('read')
+                        response = {'status': 'success', 'content': content}
+                    else:
+                        response = {'status': 'error', 'message': f'Fisierul {filename} nu exista'}
                 
                 elif command == 'download':
-                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
+                    filename = request.get('filename')
+                    filepath = os.path.join(FILES_DIR, filename)
+                    if os.path.exists(filepath):
+                        with open(filepath, 'r') as f:
+                            content = f.read()
+                        if filename not in file_history:
+                            file_history[filename] = []
+                        file_history[filename].append('download')
+                        response = {'status': 'success', 'filename': filename, 'content': content}
+                    else:
+                        response = {'status': 'error', 'message': f'Fisierul {filename} nu exista'}
                 
                 elif command == 'edit_file':
-                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
+                    filename = request.get('filename')
+                    content = request.get('content')
+                    filepath = os.path.join(FILES_DIR, filename)
+                    if os.path.exists(filepath):
+                        with open(filepath, 'w') as f:
+                            f.write(content)
+                        if filename not in file_history:
+                            file_history[filename] = []
+                        file_history[filename].append('edit')
+                        response = {'status': 'success', 'message': f'Fisierul {filename} a fost editat'}
+                    else:
+                        response = {'status': 'error', 'message': f'Fisierul {filename} nu exista'}
                 
                 elif command == 'see_file_operation_history':
-                    response = {'status': 'error', 'message': '❌ COMANDO NU ESTE IMPLEMENTATA!\nTrebuie implementata de student.'}
+                    filename = request.get('filename')
+                    if filename in file_history and len(file_history[filename]) > 0:
+                        history = file_history[filename]
+                        response = {'status': 'success', 'history': history}
+                    else:
+                        response = {'status': 'error', 'message': f'Nu exista istoric pentru {filename}'}
                 
                 elif command == 'list_files':
                     files = os.listdir(FILES_DIR)

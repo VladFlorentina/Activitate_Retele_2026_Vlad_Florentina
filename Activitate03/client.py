@@ -146,69 +146,86 @@ class FTPClient:
     # ==================== COMMANDS TO IMPLEMENT ====================
     
     def rename_file(self):
-        """STUDENT TASK: Rename a file on server"""
-        print("\n✏️  RENAME FILE (Server)")
+        print("\n RENAME FILE (Server)")
         print("-" * 40)
         
-        command = {'command': 'rename_file'}
+        old_name = input("Numele vechi al fisierului: ").strip()
+        new_name = input("Numele nou al fisierului: ").strip()
+        
+        command = {'command': 'rename_file', 'old_name': old_name, 'new_name': new_name}
         response = self.send_command(command)
         
-        if response['status'] == 'error':
-            print(f" {response['message']}")
+        if response['status'] == 'success':
+            print(f"\n{response['message']}")
         else:
-            print(f"✓ {response['message']}")
+            print(f"\n{response['message']}")
     
     def read_file(self):
-        """STUDENT TASK: Read file content from server"""
-        print("\n📖 READ FILE (Server)")
+        print("\n READ FILE (Server)")
         print("-" * 40)
         
-        command = {'command': 'read_file'}
+        self.list_files()
+        filename = input("\nScrie numele fisierului: ").strip()
+        
+        command = {'command': 'read_file', 'filename': filename}
         response = self.send_command(command)
         
-        if response['status'] == 'error':
-            print(f" {response['message']}")
+        if response['status'] == 'success':
+            print(f"\nContinutul fisierului {filename}:")
+            print(response['content'])
         else:
-            print(f"✓ {response['message']}")
+            print(f"\n{response['message']}")
     
     def download(self):
-        """STUDENT TASK: Download file from server to local"""
-        print("\n📥 DOWNLOAD FILE")
+        print("\n DOWNLOAD FILE")
         print("-" * 40)
         
-        command = {'command': 'download'}
+        self.list_files()
+        filename = input("\nScrie numele fisierului: ").strip()
+        
+        command = {'command': 'download', 'filename': filename}
         response = self.send_command(command)
         
-        if response['status'] == 'error':
-            print(f" {response['message']}")
+        if response['status'] == 'success':
+            filepath = os.path.join(LOCAL_FILES_DIR, response['filename'])
+            with open(filepath, 'w') as f:
+                f.write(response['content'])
+            print(f"\nFisierul {filename} a fost descarcat in {LOCAL_FILES_DIR}/")
         else:
-            print(f"✓ {response['message']}")
+            print(f"\n{response['message']}")
     
     def edit_file(self):
-        """STUDENT TASK: Edit file on server"""
-        print("\n🛠️  EDIT FILE (Server)")
+        print("\n EDIT FILE (Server)")
         print("-" * 40)
         
-        command = {'command': 'edit_file'}
+        self.list_files()
+        filename = input("\nScrie numele fisierului: ").strip()
+        content = input("Scrie continutul nou: ").strip()
+        
+        command = {'command': 'edit_file', 'filename': filename, 'content': content}
         response = self.send_command(command)
         
-        if response['status'] == 'error':
-            print(f" {response['message']}")
+        if response['status'] == 'success':
+            print(f"\n{response['message']}")
         else:
-            print(f"✓ {response['message']}")
+            print(f"\n{response['message']}")
     
     def see_file_operation_history(self):
-        """STUDENT TASK: See file operation history on server"""
-        print("\n📜 SEE FILE OPERATION HISTORY")
+        print("\n FILE OPERATION HISTORY")
         print("-" * 40)
         
-        command = {'command': 'see_file_operation_history'}
+        self.list_files()
+        filename = input("\nScrie numele fisierului: ").strip()
+        
+        command = {'command': 'see_file_operation_history', 'filename': filename}
         response = self.send_command(command)
         
-        if response['status'] == 'error':
-            print(f" {response['message']}")
+        if response['status'] == 'success':
+            print(f"\nIstoricul pentru {filename}:")
+            for i, op in enumerate(response['history'], 1):
+                print(f"  {i}. {op}")
         else:
-            print(f"✓ {response['message']}")
+            print(f"\n{response['message']}")
     
     def list_files(self):
         """List files on server"""
